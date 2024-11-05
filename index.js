@@ -20,22 +20,35 @@ server.listen(port, () => {
 
 //Global variables
 let mazers = {};
+let timer = {}; 
 
+// let randPosition = {
+//     x: Math.random() * 5,
+//     y: Math.random() * 5
+// }
 
 //Calculate distance between mouse positions
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
+//Get coordinates of halfway between two users
 function getMidpoint(x1, y1, x2, y2) {
   let midX = (x1 + x2) / 2;
   let midY = (y1 + y2) / 2;
   return { x: midX, y: midY };
 }
 
+//Create a key to identify a pair of users
+function getPairKey(id1, id2) {
+  return [id1, id2].sort().join('-');
+}
+
 //Listen for a client to connect and disconnect
 io.on("connection", (socket) => {
   console.log("We have a new client: " + socket.id);
+
+  // io.emit('randPosition', randPosition);
   
   //Listen for messages from the client
   // Store the user's initial position
@@ -49,12 +62,25 @@ io.on("connection", (socket) => {
             for (let [id, pos] of Object.entries(mazers)) {
               if (id !== socket.id) {
                   let distance = getDistance(mouseData.x, mouseData.y, pos.x, pos.y);
-                  if (distance <= 30) {
-                      io.emit('positiveEvent', { user1: socket.id, user2: id });
-                      console.log(`Positive event between ${socket.id} and ${id}`);
-                      let midpoint = getMidpoint(mouseData.x, mouseData.y, pos.x, pos.y);
-                      io.emit('midpoint', midpoint)
-                      console.log(midpoint); 
+                  let pairKey = getPairKey(socket.id, id);
+
+                  if (distance <= 50) {
+                    //Start tracking the time if the users are within 50 pixels
+                    if (!timer[pairKey]){
+                      timer[pairKey] = Date.now();
+                    }else{
+                      let elapsed = Date.now() - timer[pairKey];
+                      if (elapsed >= 3000) {
+                        io.emit('positiveEvent', { user1: socket.id, user2: id });
+                        console.log(`Positive event between ${socket.id} and ${id}`);
+                        let midpoint = getMidpoint(mouseData.x, mouseData.y, pos.x, pos.y);
+                        io.emit('midpoint', midpoint);
+                        console.log(midpoint); 
+                      }
+                    }
+                  } else{
+                    //Reset timer if they get farther apart
+                    delete timer[pairKey];
                   }
               }
           }
