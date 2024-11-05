@@ -4,6 +4,7 @@ let socket = io();
 //global variables
 let myRed, myGreen, myBlue;
 let myDiameter;
+let duke = document.querySelector('#audio')
 
 let circles = [];
 
@@ -32,8 +33,9 @@ function draw(){
 
         //Listen for midpoint data
         socket.on('midpoint', function(midpoint) {
-          console.log(midpoint);
+          // console.log(midpoint);
           drawPos(midpoint);
+          duke.play();
         });
 }
 
@@ -58,7 +60,7 @@ socket.on('connect', () => {
 function drawPos(pos) {
   fill(255, 255, 0);
   noStroke();
-  circle(pos.x, pos.y, 10);
+  circle(pos.x, pos.y, 50);
 }
 
 // function drawEllipse(obj) {
