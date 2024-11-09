@@ -22,11 +22,6 @@ server.listen(port, () => {
 let mazers = {};
 let timer = {}; 
 
-// let randPosition = {
-//     x: Math.random() * 5,
-//     y: Math.random() * 5
-// }
-
 //Calculate distance between mouse positions
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
