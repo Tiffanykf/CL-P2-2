@@ -63,12 +63,6 @@ function drawPos(pos) {
   circle(pos.x, pos.y, 50);
 }
 
-// function drawEllipse(obj) {
-//   fill(255,255,0);
-//   // noStroke();
-//   ellipse(obj.x, obj.y, obj.d, obj.d);
-// }
-
 function mazePath() {
   let protection = 0;
 
