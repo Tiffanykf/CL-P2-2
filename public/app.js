@@ -35,7 +35,6 @@ function draw(){
         socket.on('midpoint', function(midpoint) {
           // console.log(midpoint);
           drawPos(midpoint);
-          duke.play();
         });
 }
 
